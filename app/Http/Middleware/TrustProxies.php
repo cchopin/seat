@@ -10,9 +10,9 @@ class TrustProxies extends Middleware
     /**
      * The trusted proxies for this application.
      *
-     * Set to null to trust no proxy by default.
-     * Configure trusted proxies via the TRUST_PROXIES environment variable
-     * (e.g. a single IP, a comma-separated list, or a CIDR range like 10.0.0.0/8).
+     * Set to null to trust no proxies by default. If SeAT is deployed behind
+     * a reverse proxy (nginx, Traefik, AWS ALB, etc.), set this to the proxy
+     * IP or CIDR range, e.g.: ['10.0.0.0/8'] or ['192.168.1.1'].
      *
      * @var array<int, string>|string|null
      */
@@ -29,16 +29,4 @@ class TrustProxies extends Middleware
         Request::HEADER_X_FORWARDED_PORT |
         Request::HEADER_X_FORWARDED_PROTO |
         Request::HEADER_X_FORWARDED_AWS_ELB;
-
-    /**
-     * Bootstrap the trusted proxies from the environment.
-     */
-    public function __construct()
-    {
-        $envProxies = env('TRUST_PROXIES');
-
-        if (! empty($envProxies)) {
-            $this->proxies = array_map('trim', explode(',', $envProxies));
-        }
-    }
 }
